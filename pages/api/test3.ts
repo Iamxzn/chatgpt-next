@@ -1,5 +1,6 @@
 import type { ChatMessage, SendMessageOptions } from 'chatgpt';
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { createParser } from 'eventsource-parser';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import type { HttpStatusCode } from '@/utils/constants';
@@ -28,6 +29,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const content = req.query.content as string;
   const encoder = new TextEncoder();
 
+  const parser = createParser((event) => {
+    if (event.type === 'event') {
+      console.log(event.data);
+    }
+  });
+
   (async () => {
     const apiKey = req.cookies?.apiKey;
     const decoder = new TextDecoder();
@@ -48,14 +55,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     console.log('after fetch');
 
-    for await (const chunkUint8Array of fetchResult.body as any) {
+    for await (const chunkUint8Array of streamAsyncIterable(fetchResult.body!)) {
       const chunkString = decoder.decode(chunkUint8Array);
       console.log(chunkString);
-      res.write(encoder.encode(`data: ${chunkString}\n\n`));
+      // res.write(encoder.encode(`data: ${chunkString}\n\n`));
+      parser.feed(chunkString);
       // writer.write(encoder.encode(`data: ${chunkString}\n\n`));
     }
   })();
 
   res.write(`event: finish\ndata: 完成\n\n`);
   return;
+}
+
+export async function* streamAsyncIterable<T>(stream: ReadableStream<T>) {
+  const reader = stream.getReader();
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) {
+        return;
+      }
+      yield value;
+    }
+  } finally {
+    reader.releaseLock();
+  }
 }
