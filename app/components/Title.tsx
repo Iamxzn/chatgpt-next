@@ -14,7 +14,7 @@ export const Title = () => {
     <>
       <div placeholder="" className="h-14" />
       <h1 className="w-inherit fixed z-10 top-0 py-3.5 bg-gray-wx text-center text-lg border-b-[0.5px] border-gray-300 md:-mx-4">
-        ChatGPT Next
+        AI Lsynetwork
       </h1>
     </>
   );
