@@ -171,8 +171,8 @@ const MenuFooter = () => {
   return (
     <div className="flex-none mx-4 my-5 pb-[env(safe-area-inset-bottom)] text-center text-gray-400 text-sm">
       由{' '}
-      <a className="text-link-gray" href="https://github.com/xcatliu/chatgpt-next" target="_blank">
-        ChatGPT Next
+      <a className="text-link-gray" href="https://www.lsynetwork.com" target="_blank">
+        AI Lsynetwork
       </a>{' '}
       驱动
     </div>
