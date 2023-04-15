@@ -174,7 +174,7 @@ const MenuFooter = () => {
       <a className="text-link-gray" href="https://www.lsynetwork.com" target="_blank">
         AI Lsynetwork
       </a>{' '}
-      驱动
+      支持
     </div>
   );
 };
